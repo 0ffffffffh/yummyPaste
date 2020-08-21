@@ -1,6 +1,6 @@
 a plugin to able to paste the string formatted binary data into the x64dbg. 
 
-you can use 
+it can parse following formats
 
 c style byte array, 
 ***{0x90, 0x90, 0x90};***
