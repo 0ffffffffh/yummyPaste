@@ -1,0 +1,13 @@
+bin/
+x64/
+Debug/
+Release/
+.vs/
+*.sdf
+*.opensdf
+*.suo
+*.vcxproj.user
+*.VC.*db
+*.bat
+*.cmd
+*.7zip
