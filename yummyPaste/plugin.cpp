@@ -4,7 +4,9 @@
 enum
 {
     MENU_DISASM_PASTE,
+	MENU_DISASM_PASTE_PATCH,
     MENU_DUMP_PASTE,
+	MENU_DUMP_PASTE_PATCH,
 	MENU_DISASM_ABOUT,
 	MENU_DUMP_ABOUT
 };
@@ -93,7 +95,7 @@ oneWayExit:
 
 
 
-void MakeTomatoPaste(int window)
+void MakeTomatoPaste(int window,BOOL patched)
 {
 	size_t pdLen = 0;
 	LPSTR pasteData = NULL;
@@ -127,7 +129,10 @@ void MakeTomatoPaste(int window)
 		return;
 	}
 
-	DbgMemWrite(sel.start, binary->binary, binary->index);
+	if(patched)
+		DbgFunctions()->MemPatch(sel.start, binary->binary, binary->index);
+	else
+		DbgMemWrite(sel.start, binary->binary, binary->index);
 	
 	Free(pasteData);
 
@@ -160,12 +165,17 @@ PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
     {
 
     case MENU_DISASM_PASTE:
-        MakeTomatoPaste(GUI_DISASSEMBLY);
+        MakeTomatoPaste(GUI_DISASSEMBLY, FALSE);
         break;
-
+	case MENU_DISASM_PASTE_PATCH:
+		MakeTomatoPaste(GUI_DISASSEMBLY, TRUE);
+		break;
     case MENU_DUMP_PASTE:
-        MakeTomatoPaste(GUI_DUMP);
+        MakeTomatoPaste(GUI_DUMP,FALSE);
         break;
+	case MENU_DUMP_PASTE_PATCH:
+		MakeTomatoPaste(GUI_DUMP, TRUE);
+		break;
 	case MENU_DISASM_ABOUT:
 	case MENU_DUMP_ABOUT:
 		About();
@@ -197,7 +207,9 @@ void pluginStop()
 void pluginSetup()
 {
     _plugin_menuaddentry(hMenuDisasm, MENU_DISASM_PASTE, "&Paste it!");
+	_plugin_menuaddentry(hMenuDisasm, MENU_DISASM_PASTE_PATCH, "Paste and Patch");
     _plugin_menuaddentry(hMenuDump, MENU_DUMP_PASTE, "&Paste it!");
+	_plugin_menuaddentry(hMenuDump, MENU_DUMP_PASTE_PATCH, "Paste and Patch");
 	_plugin_menuaddentry(hMenuDisasm, MENU_DISASM_ABOUT, "A&bout");
 	_plugin_menuaddentry(hMenuDump, MENU_DUMP_ABOUT, "A&bout");
 
